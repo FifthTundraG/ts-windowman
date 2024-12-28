@@ -11,6 +11,11 @@ export class WindowMan {
 
     initializedCanvas: boolean;
 
+    // these are used for dragging the window and yes will be changed later
+    activeWindowInitialMouseDownX: number;
+    activeWindowInitialMouseDownY: number;
+    movingWindow: boolean;
+
     constructor() {
         this.initializedCanvas = false;
         
@@ -18,6 +23,10 @@ export class WindowMan {
             titlebarHeight: 20,
             windowBorder: 1
         }
+
+        this.activeWindowInitialMouseDownX = 0;
+        this.activeWindowInitialMouseDownY = 0;
+        this.movingWindow = false;
 
         this.canvas = document.createElement("div");
     }
@@ -42,7 +51,8 @@ export class WindowMan {
         document.head.appendChild(style);
 
         this.canvas.id = "tswindowman-canvas";
-        this.canvas.style.height = "100lvh";
+        this.canvas.style.height = "100%";
+        this.canvas.style.width = "100%";
         this.canvas.style.position = "absolute";
 
         element.appendChild(this.canvas);
@@ -56,6 +66,7 @@ export class WindowMan {
         window.html.style.width = window.width.toString()+"px";
         window.html.style.height = window.height.toString()+"px";
         window.html.style.border = `solid ${this.config.windowBorder.toString()}px black`;
+        window.html.style.position = "absolute";
             const titlebar = document.createElement("div");
             titlebar.style.display = "flex";
             titlebar.style.height = this.config.titlebarHeight.toString()+"px";
@@ -63,6 +74,27 @@ export class WindowMan {
             titlebar.style.justifyContent = "center";
             titlebar.style.padding = "1px";
             titlebar.style.position = "relative"; //?
+            titlebar.addEventListener("mousedown", (e) => {
+                this.movingWindow = true;
+                this.activeWindowInitialMouseDownX = e.clientX;
+                this.activeWindowInitialMouseDownY = e.clientY;
+                
+                // window.html.style.left = `${e.clientX}px`;
+                // window.html.style.top = `${e.clientY}px`;
+                document.addEventListener("mousemove", (e) => {
+                    if (!this.movingWindow) return;
+    
+                    window.html.style.left = (window.html.offsetLeft - (this.activeWindowInitialMouseDownX - e.clientX)) + "px";
+                    window.html.style.top = (window.html.offsetTop - (this.activeWindowInitialMouseDownY - e.clientY)) + "px";
+                    this.activeWindowInitialMouseDownX = e.clientX;
+                    this.activeWindowInitialMouseDownY = e.clientY
+                });
+                document.addEventListener("mouseup", () => { 
+                    this.movingWindow = false;
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+                });
+            });
                 const title = document.createElement("p");
                 title.innerText = window.title;
                 title.style.fontSize = "12px";
