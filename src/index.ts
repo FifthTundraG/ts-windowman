@@ -70,6 +70,9 @@ export class WindowMan {
         // the dragWindow() func gets angry when there's no existing left/top styles, fix later maybe
         window.html.style.top = "0px";
         window.html.style.left = "0px";
+        window.html.addEventListener("mousedown", () => {
+            this.canvas.append(window.html) // makes the window that was just touched be drawn above all the others
+        });
             const titlebar = document.createElement("div");
             titlebar.style.display = "flex";
             titlebar.style.height = this.config.titlebarHeight.toString()+"px";
