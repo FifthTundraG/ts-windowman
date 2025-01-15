@@ -67,6 +67,9 @@ export class WindowMan {
         window.html.style.height = window.height.toString()+"px";
         window.html.style.border = `solid ${this.config.windowBorder.toString()}px black`;
         window.html.style.position = "absolute";
+        // the dragWindow() func gets angry when there's no existing left/top styles, fix later maybe
+        window.html.style.top = "0px";
+        window.html.style.left = "0px";
             const titlebar = document.createElement("div");
             titlebar.style.display = "flex";
             titlebar.style.height = this.config.titlebarHeight.toString()+"px";
@@ -74,26 +77,16 @@ export class WindowMan {
             titlebar.style.justifyContent = "center";
             titlebar.style.padding = "1px";
             titlebar.style.position = "relative"; //?
-            titlebar.addEventListener("mousedown", (e) => {
-                this.movingWindow = true;
-                this.activeWindowInitialMouseDownX = e.clientX;
-                this.activeWindowInitialMouseDownY = e.clientY;
-                
-                // window.html.style.left = `${e.clientX}px`;
-                // window.html.style.top = `${e.clientY}px`;
-                document.addEventListener("mousemove", (e) => {
-                    if (!this.movingWindow) return;
-    
-                    window.html.style.left = (window.html.offsetLeft - (this.activeWindowInitialMouseDownX - e.clientX)) + "px";
-                    window.html.style.top = (window.html.offsetTop - (this.activeWindowInitialMouseDownY - e.clientY)) + "px";
-                    this.activeWindowInitialMouseDownX = e.clientX;
-                    this.activeWindowInitialMouseDownY = e.clientY
-                });
-                document.addEventListener("mouseup", () => { 
-                    this.movingWindow = false;
-                    document.onmouseup = null;
-                    document.onmousemove = null;
-                });
+            const dragElemAnon = (e: MouseEvent) => {
+                dragElement(e, window.html)
+            };
+            titlebar.addEventListener("mousedown", () => {
+                document.addEventListener("mousemove", dragElemAnon);
+                console.log("mousdown")
+            });
+            document.addEventListener("mouseup", () => {
+                document.removeEventListener("mousemove", dragElemAnon);
+                console.log("mouseup")
             });
                 const title = document.createElement("p");
                 title.innerText = window.title;
@@ -141,4 +134,12 @@ export class Window {
     kill() {
         this.html.remove();
     }
+}
+
+function dragElement(e: MouseEvent, element: HTMLElement) {
+    let leftValue = parseInt(element.style.left);
+    let topValue = parseInt(element.style.top);
+    element.style.left = `${leftValue + e.movementX}px`;
+    element.style.top = `${topValue + e.movementY}px`;
+    console.log("dragging: "+element.id)
 }
