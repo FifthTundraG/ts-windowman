@@ -58,6 +58,7 @@ export class WindowMan {
         this.canvas.style.width = "100%";
         this.canvas.style.position = "absolute";
         this.canvas.style.overflow = "hidden";
+        this.canvas.style.pointerEvents = "none"; // this will make the stuff behind the canvas interactable
 
         element.appendChild(this.canvas);
 
@@ -153,6 +154,8 @@ export class Window {
         // the dragWindow() func gets angry when there's no existing left/top styles, fix later maybe
         this.html.style.top = "0px";
         this.html.style.left = "0px";
+        // windows MUST have this here to be interactable. pointer-events is set to none on the canvas so that you can interact with anything behind the canvas, but to interact with the window this must be auto or it will propagate
+        this.html.style.pointerEvents = "auto";
 
         // this.html must be assigned a value before width/height, see setters
         this.width = width;
