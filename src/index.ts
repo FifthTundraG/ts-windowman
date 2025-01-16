@@ -1,4 +1,6 @@
 interface WindowManConfig {
+    /** color of the titlebar window decoration */
+    titlebarColor: string;
     /** Height of titlebar in px */
     titlebarHeight: number;
     /** `border-width` of window */
@@ -21,7 +23,8 @@ export class WindowMan {
         
         this.config = {
             titlebarHeight: 20,
-            windowBorder: 1
+            windowBorder: 1,
+            titlebarColor: "#EFF0F1"
         }
 
         this.activeWindowInitialMouseDownX = 0;
@@ -54,6 +57,7 @@ export class WindowMan {
         this.canvas.style.height = "100%";
         this.canvas.style.width = "100%";
         this.canvas.style.position = "absolute";
+        this.canvas.style.overflow = "hidden";
 
         element.appendChild(this.canvas);
 
@@ -61,15 +65,8 @@ export class WindowMan {
         console.log("Initialized ts-windowman canvas.");
     }
 
-
     createWindow(window: Window) {
-        window.html.style.width = window.width.toString()+"px";
-        window.html.style.height = window.height.toString()+"px";
         window.html.style.border = `solid ${this.config.windowBorder.toString()}px black`;
-        window.html.style.position = "absolute";
-        // the dragWindow() func gets angry when there's no existing left/top styles, fix later maybe
-        window.html.style.top = "0px";
-        window.html.style.left = "0px";
         window.html.addEventListener("mousedown", () => {
             this.canvas.append(window.html) // makes the window that was just touched be drawn above all the others
         });
@@ -80,6 +77,7 @@ export class WindowMan {
             titlebar.style.justifyContent = "center";
             titlebar.style.padding = "1px";
             titlebar.style.position = "relative"; //?
+            titlebar.style.backgroundColor = this.config.titlebarColor;
             const dragElemAnon = (e: MouseEvent) => {
                 dragElement(e, window.html)
             };
@@ -113,25 +111,58 @@ export class WindowMan {
                     buttons.appendChild(xbutton);
                 titlebar.appendChild(buttons);
             window.html.appendChild(titlebar);
+
+            if (window.content !== undefined) window.html.appendChild(window.content);
         this.canvas.appendChild(window.html);
     }
 }
 
 export class Window {
     // private _windowman: WindowMan;
-    width: number;
-    height: number;
+    _width: number = 0;
+    set width(num: number) {
+        this._width = num;
+        this.html.style.width = this.width.toString()+"px";
+    }
+    get width(): number {
+        return this._width;
+    }
+    _height: number = 0;
+    set height(num: number) {
+        this._height = num;
+        this.html.style.height = this.height.toString()+"px";
+    }
+    get height(): number {
+        return this._height;
+    }
     title: string;
 
-    html: HTMLDivElement;
+    // configuration
+    drawDecorations: boolean; // whether or not to have WindowMan draw the window decoration. if you add your own this should be false
 
-    constructor(width: number, height: number, title: string) {
+    // html
+    html: HTMLDivElement;
+    /** this is the stuff you see in the window. think the writing part of notepad or the painting part of mspaint. NOT the titlebar. */
+    content: HTMLElement | undefined;
+
+    constructor(width: number, height: number, title: string, content: HTMLElement=document.createElement("div")) {
         // this._windowman = windowman;
+        this.html = document.createElement("div");
+        this.html.style.backgroundColor = "white"; // the window is transparent without this and just to avoid confusion let's make that not be the case
+        this.html.style.position = "absolute";
+        // the dragWindow() func gets angry when there's no existing left/top styles, fix later maybe
+        this.html.style.top = "0px";
+        this.html.style.left = "0px";
+
+        // this.html must be assigned a value before width/height, see setters
         this.width = width;
         this.height = height;
         this.title = title;
 
-        this.html = document.createElement("div");
+        // configuration
+        this.drawDecorations = true;
+
+        this.content = content;
     }
 
     kill() {
