@@ -1,10 +1,11 @@
 {
   "name": "ts-windowman",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "TypeScript Window Manager for the web",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
+    "build": "npx tsc",
     "watch": "npx tsc --watch"
   },
   "repository": {
