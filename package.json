@@ -17,7 +17,7 @@
     "url": "https://github.com/FifthTundraG/ts-windowman/issues"
   },
   "homepage": "https://github.com/FifthTundraG/ts-windowman#readme",
-  "dependencies": {
+  "devDependencies": {
     "typescript": "^5.7.2"
   }
 }
