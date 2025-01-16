@@ -1,6 +1,6 @@
 {
   "name": "ts-windowman",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "TypeScript Window Manager for the web",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
