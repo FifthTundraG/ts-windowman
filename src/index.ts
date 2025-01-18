@@ -144,7 +144,7 @@ export class Window {
     // html
     html: HTMLDivElement;
     /** this is the stuff you see in the window. think the writing part of notepad or the painting part of mspaint. NOT the titlebar. */
-    content: HTMLElement | undefined;
+    content: HTMLElement;
 
     constructor(width: number, height: number, title: string, content: HTMLElement=document.createElement("div")) {
         // this._windowman = windowman;
