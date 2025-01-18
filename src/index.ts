@@ -151,6 +151,7 @@ export class Window {
         this.html = document.createElement("div");
         this.html.style.backgroundColor = "white"; // the window is transparent without this and just to avoid confusion let's make that not be the case
         this.html.style.position = "absolute";
+        this.html.style.overflow = "hidden";
         // the dragWindow() func gets angry when there's no existing left/top styles, fix later maybe
         this.html.style.top = "0px";
         this.html.style.left = "0px";
